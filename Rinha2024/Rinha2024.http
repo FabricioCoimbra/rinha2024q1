@@ -1,0 +1,11 @@
+@Rinha2024_HostAddress = http://localhost:9999
+
+GET {{Rinha2024_HostAddress}}/clientes/
+Accept: application/json
+
+###
+
+GET {{Rinha2024_HostAddress}}/clientes/1/extrato
+Accept: application/json
+
+###
