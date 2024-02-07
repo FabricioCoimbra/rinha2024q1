@@ -40,8 +40,29 @@ COPY . .
 WORKDIR "/src/."
 RUN dotnet build "./Rinha2024.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+
+
+
+
+
+
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
+
+# Install clang/zlib1g-dev dependencies for publishing to native
+RUN apt-get remove
+RUN wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+RUN dpkg -i packages-microsoft-prod.deb
+RUN rm packages-microsoft-prod.deb
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    clang zlib1g-dev
+
+RUN apt-get install -y dotnet-host
+RUN apt-get install -y dotnet-sdk-8.0
+
+
 RUN dotnet publish "./Rinha2024.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=true
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:8.0 AS final
