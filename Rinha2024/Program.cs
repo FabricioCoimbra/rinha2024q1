@@ -83,7 +83,7 @@ clienteApi.MapGet("/{id}/extrato", async (int id, [FromServices] AppDBContext db
 
     var saldo = new Saldo() { Data_extrato = DateTime.Now, Limite = cliente.Limite, Total = cliente.Saldoinicial };
     var transacoesDoCliente = await dbContext.Transacoes.Where(t => t.IdCliente == id)
-        .OrderByDescending(t => t.Realizada_em)
+        .OrderByDescending(t => t.Id)
         .Take(10)        
         .AsNoTracking()        
         .ToListAsync();
