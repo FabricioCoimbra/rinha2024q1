@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Rinha2024.Data;
 using Rinha2024.Model;
 
+Console.WriteLine("Iniciando API");
+
 var builder = WebApplication.CreateSlimBuilder(args);
 
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -12,7 +14,9 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AppDBContext>(options =>
+
+Console.WriteLine(connectionString);
+builder.Services.AddDbContextPool<AppDBContext>(options =>
     options.UseNpgsql(connectionString));
 
 
@@ -87,3 +91,6 @@ clienteApi.MapGet("/{id}/extrato", async (int id, [FromServices] AppDBContext db
 });
 
 app.Run();
+
+
+Console.WriteLine("Tamo Online");

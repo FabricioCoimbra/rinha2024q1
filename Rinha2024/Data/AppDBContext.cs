@@ -8,6 +8,8 @@ public class AppDBContext : DbContext
     public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
     {        
     }
+
+#if DEBUG
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured) 
@@ -17,6 +19,8 @@ public class AppDBContext : DbContext
         }
         base.OnConfiguring(optionsBuilder);
     }
+#endif
+
     public DbSet<Cliente> Clientes => Set<Cliente>();
     public DbSet<Transacao> Transacoes => Set<Transacao>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
