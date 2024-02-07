@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Rinha2024.Data;
 using Rinha2024.Model;
 
-Console.WriteLine("Iniciando API");
-
 var builder = WebApplication.CreateSlimBuilder(args);
 
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -14,11 +12,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-Console.WriteLine(connectionString);
 builder.Services.AddDbContextPool<AppDBContext>(options =>
     options.UseNpgsql(connectionString));
-
 
 var app = builder.Build();
 
@@ -28,30 +23,31 @@ clienteApi.MapPost("/{id}/transacoes", async (int id, [FromBody] Transacao trans
     if (id < 1 || id > 5)
         return Results.NotFound();
 
-    var cliente = await dbContext.Clientes.FirstOrDefaultAsync(c => c.Id == id);
+    var cliente = await dbContext.Clientes.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
     if (cliente is null)
         return Results.NotFound();
 
+    long valor = 0;
     if (transacao.Tipo == "c")
     {
-        //dbContext.Clientes.ExecuteUpdate(c => c.SetProperty(e => e.Saldoinicial, e => e.Saldoinicial + transacao.Valor));
-        cliente.Saldoinicial += transacao.Valor;
+        valor = cliente.Saldoinicial + transacao.Valor;        
     }        
     else
     {
-        if (!(cliente.Saldoinicial - transacao.Valor > cliente.Limite * -1))
+        valor = cliente.Saldoinicial - transacao.Valor;
+        if (!(valor > cliente.Limite * -1))
             return Results.UnprocessableEntity();
-        //dbContext.Clientes.ExecuteUpdate(c => c.SetProperty(e => e.Saldoinicial, e => e.Saldoinicial - transacao.Valor));
-        cliente.Saldoinicial -= transacao.Valor;
     }
 
-    dbContext.Clientes.Update(cliente);
+    var registrosAfetados = await dbContext.Database
+        .ExecuteSqlAsync($"UPDATE public.\"Clientes\" SET \"Saldoinicial\" = {valor}  WHERE \"Id\"= {id};");
 
     transacao.IdCliente = id;
+    transacao.Descricao ??= "";
     transacao.Realizada_em = DateTime.UtcNow.AddHours(-3);
     dbContext.Transacoes.Add(transacao);
     await dbContext.SaveChangesAsync();
-    return Results.Ok(new TransacaoResponse(cliente.Limite, cliente.Saldoinicial));
+    return Results.Ok(new TransacaoResponse(cliente.Limite, valor));
 });
 
 clienteApi.MapGet("/", async ([FromServices] AppDBContext dbContext) =>
@@ -86,11 +82,12 @@ clienteApi.MapGet("/{id}/extrato", async (int id, [FromServices] AppDBContext db
         return Results.NotFound();
 
     var saldo = new Saldo() { Data_extrato = DateTime.Now, Limite = cliente.Limite, Total = cliente.Saldoinicial };
-    var transacoesDoCliente = await dbContext.Transacoes.Where(t => t.IdCliente == id).AsNoTracking().ToListAsync();
+    var transacoesDoCliente = await dbContext.Transacoes.Where(t => t.IdCliente == id)
+        .OrderByDescending(t => t.Realizada_em)
+        .Take(10)        
+        .AsNoTracking()        
+        .ToListAsync();
     return Results.Ok(new Extrato() { Saldo = saldo, Ultimas_transacoes = transacoesDoCliente });
 });
 
 app.Run();
-
-
-Console.WriteLine("Tamo Online");

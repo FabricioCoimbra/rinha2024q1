@@ -12,7 +12,7 @@ public class Transacao
     [MaxLength(1)]
     public required string Tipo { get; set; }
     [MaxLength(100)]
-    public required string Descricao { get; set; }
+    public string? Descricao { get; set; }
     public int? IdCliente { get; set; }
     public Cliente? Cliente { get; set; }
     public DateTime Realizada_em { get; set; }
