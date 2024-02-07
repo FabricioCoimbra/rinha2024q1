@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Rinha2024.Model;
 public class Transacao
@@ -13,7 +14,9 @@ public class Transacao
     public string Tipo { get; set; }
     [MaxLength(100)]
     public string? Descricao { get; set; }
+    [JsonIgnore]
     public int? IdCliente { get; set; }
+    [JsonIgnore]
     public Cliente? Cliente { get; set; }
     public DateTime Realizada_em { get; set; }
 }

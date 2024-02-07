@@ -77,16 +77,18 @@ clienteApi.MapGet("/{id}/extrato", async (int id, [FromServices] AppDBContext db
     if (id < 1 || id > 5)
         return Results.NotFound();
 
-    var cliente = await dbContext.Clientes.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+    var cliente = await dbContext.Clientes
+    .Include(c => c.Transacoes)
+    .AsNoTracking()
+    .FirstOrDefaultAsync(c => c.Id == id);
     if (cliente is null)
         return Results.NotFound();
 
     var saldo = new Saldo() { Data_extrato = DateTime.Now, Limite = cliente.Limite, Total = cliente.Saldoinicial };
-    var transacoesDoCliente = await dbContext.Transacoes.Where(t => t.IdCliente == id)
+    var transacoesDoCliente = cliente.Transacoes
         .OrderByDescending(t => t.Id)
-        .Take(10)        
-        .AsNoTracking()        
-        .ToListAsync();
+        .Take(10)       
+        .ToList();
     return Results.Ok(new Extrato() { Saldo = saldo, Ultimas_transacoes = transacoesDoCliente });
 });
 
