@@ -14,8 +14,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "3.30"
-          memory: "3100MB"
+          cpus: "0.30"
+          memory: "150MB"
 
   api02:
     <<: *api
@@ -24,7 +24,7 @@ services:
       - DB_HOSTNAME=rinhadb
       - PORT=8080
     ports:
-      - "8080:8080"
+      - "8082:8080"
   
   nginx:
     image: nginx:latest
@@ -38,8 +38,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "3.25"
-          memory: "330MB"
+          cpus: "0.25"
+          memory: "10MB"
 
   db:
     image: postgres:latest
@@ -56,8 +56,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "3.65"
-          memory: "3320MB"
+          cpus: "0.65"
+          memory: "240MB"
 
 networks:
   default:

@@ -26,8 +26,6 @@ public class AppDBContext : DbContext
     public DbSet<RetornoAtualizarSaldo> AtualizarSaldos => Set<RetornoAtualizarSaldo>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //modelBuilder.Entity<Cliente>();
-
         modelBuilder.Entity<Transacao>()
             .HasOne(t => t.Cliente)
             .WithMany(c => c.Transacoes)

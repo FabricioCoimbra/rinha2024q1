@@ -27,6 +27,5 @@ ECHO "======================================================"
 ECHO "===========         Start Test          =============="
 ECHO "======================================================"
 
-powershell "C:\Fontes\rinha-de-backend-2024-q1\executar-teste-local.ps1"
 
 timeout /t -1

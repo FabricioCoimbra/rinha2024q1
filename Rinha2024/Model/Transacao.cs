@@ -9,7 +9,7 @@ public class Transacao
         this.Realizada_em = DateTime.UtcNow.AddHours(-3);
     }
     public int Id { get; set; }
-    public long Valor { get; set; }
+    public decimal Valor { get; set; }
     [MaxLength(1)]
     public string Tipo { get; set; }
     [MaxLength(100)]
