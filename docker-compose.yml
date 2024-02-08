@@ -5,7 +5,7 @@ services:
     image: fabriciocoimbra/rinhabackend2024:latest
     hostname: api01
     environment:
-      - DB_HOSTNAME=rinhadb
+      - ConnectionStrings__DefaultConnection = "Host=db;Port=5432;Database=rinhadb;Username=admin;Password=makeLifeSimple;MaxPoolSize=50;"
       - PORT=8080
     ports:
       - "8081:8080"
@@ -14,17 +14,17 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.30"
+          cpus: "0.25"
           memory: "150MB"
 
   api02:
     <<: *api
     hostname: api02
     environment:
-      - DB_HOSTNAME=rinhadb
+      - ConnectionStrings__DefaultConnection = "Host=db;Port=5432;Database=rinhadb;Username=admin;Password=makeLifeSimple;MaxPoolSize=50;"
       - PORT=8080
     ports:
-      - "8082:8080"
+      - "8080:8080"
   
   nginx:
     image: nginx:latest
@@ -38,8 +38,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.25"
-          memory: "10MB"
+          cpus: "0.35"
+          memory: "15MB"
 
   db:
     image: postgres:latest
@@ -57,7 +57,7 @@ services:
       resources:
         limits:
           cpus: "0.65"
-          memory: "240MB"
+          memory: "235MB"
 
 networks:
   default:
