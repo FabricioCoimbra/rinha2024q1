@@ -23,6 +23,7 @@ public class AppDBContext : DbContext
 
     public DbSet<Cliente> Clientes => Set<Cliente>();
     public DbSet<Transacao> Transacoes => Set<Transacao>();
+    public DbSet<RetornoAtualizarSaldo> AtualizarSaldos => Set<RetornoAtualizarSaldo>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //modelBuilder.Entity<Cliente>();
@@ -31,6 +32,8 @@ public class AppDBContext : DbContext
             .HasOne(t => t.Cliente)
             .WithMany(c => c.Transacoes)
             .HasForeignKey(t => t.IdCliente);
+
+        modelBuilder.Entity<RetornoAtualizarSaldo>().HasNoKey();
 
         base.OnModelCreating(modelBuilder);
     }
