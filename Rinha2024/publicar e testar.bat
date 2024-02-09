@@ -13,7 +13,7 @@ docker push fabriciocoimbra/rinhabackend2024:latest
 ECHO "======================================================"
 ECHO "===========      Restart cluster        =============="
 ECHO "======================================================"
-docker-compose down --volumes --remove-orphans
+docker-compose down --volumes --remove-orphans --rmi all
 timeout 5
 docker-compose up -d
 
@@ -27,5 +27,8 @@ ECHO "======================================================"
 ECHO "===========         Start Test          =============="
 ECHO "======================================================"
 
+ECHO "cd C:\Fontes\rinha-de-backend-2024-q1"
+
+ECHO ".\executar-teste-local.ps1"
 
 timeout /t -1

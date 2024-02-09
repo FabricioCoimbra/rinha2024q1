@@ -1,27 +1,37 @@
 version: "3.5"
 
 services:
-  api01: &api
-    image: fabriciocoimbra/rinhabackend2024:latest
-    hostname: api01
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    restart: always
     environment:
-      - ConnectionStrings__DefaultConnection = "Host=db;Port=5432;Database=rinhadb;Username=admin;Password=makeLifeSimple;MaxPoolSize=50;"
+      PGADMIN_DEFAULT_EMAIL: your_email@example.com
+      PGADMIN_DEFAULT_PASSWORD: your_password
+    ports:
+      - "5050:80"
+      
+  netcore01: &api
+    image: fabriciocoimbra/rinhabackend2024:latest
+    hostname: netcore01
+    environment:
+      - ConnectionStrings__DefaultConnection = "Não funcionou"
       - PORT=8080
     ports:
       - "8081:8080"
     depends_on:
-      - db
+      - postgres
     deploy:
       resources:
         limits:
-          cpus: "0.25"
-          memory: "150MB"
+          cpus: "0.30"
+          memory: "120MB"
 
-  api02:
+  netcore02:
     <<: *api
-    hostname: api02
+    hostname: netcore02
     environment:
-      - ConnectionStrings__DefaultConnection = "Host=db;Port=5432;Database=rinhadb;Username=admin;Password=makeLifeSimple;MaxPoolSize=50;"
+      - ConnectionStrings__DefaultConnection = "Não funcionou"
       - PORT=8080
     ports:
       - "8080:8080"
@@ -31,17 +41,17 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - api01
-      - api02
+      - netcore01
+      - netcore02
     ports:
       - "9999:9999"
     deploy:
       resources:
         limits:
-          cpus: "0.35"
-          memory: "15MB"
+          cpus: "0.45"
+          memory: "40MB"
 
-  db:
+  postgres:
     image: postgres:latest
     hostname: db
     environment:
@@ -56,10 +66,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.65"
-          memory: "235MB"
+          cpus: "0.45"
+          memory: "270MB"
 
 networks:
   default:
     driver: bridge
-    name: rinha-nginx-2024q1
+    name: garnize

@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "http": {
+    "Bora": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "clientes",
@@ -9,15 +9,6 @@
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:8585"
-    },
-    "Docker": {
-      "commandName": "Docker",
-      "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/clientes",
-      "environmentVariables": {
-        "ASPNETCORE_HTTP_PORTS": "8080"
-      },
-      "publishAllPorts": true
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json"

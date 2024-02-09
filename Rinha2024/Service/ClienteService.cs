@@ -3,23 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Rinha2024.Data;
 using Rinha2024.Model;
 
-namespace Rinha2024
+namespace Rinha2024.Service
 {
-    //precisei criar essa classe pros testes unitários :)
-    public static class RotasClientesBuilder
+    //Não me guento sem criar um service separado com as regras de negócio kkkkkkkkkkkkkk
+    public static class ClienteService
     {
-        public static RouteGroupBuilder MapearClientesApi(this RouteGroupBuilder clienteApi)
-        {
-            clienteApi.MapPost("/{id}/transacoes", ExecutaTransacao);
-
-            clienteApi.MapGet("/", async ([FromServices] AppDBContext dbContext) =>
-                await dbContext.Clientes.AsNoTracking().ToListAsync());
-
-            clienteApi.MapGet("/{id}/extrato", ListarExtrato);
-
-            return clienteApi;
-        }
-
         public static async Task<IResult> ExecutaTransacao(int id, [FromBody] Transacao transacao, [FromServices] AppDBContext dbContext)
         {
             if (id < 1 || id > 5)
@@ -29,7 +17,7 @@ namespace Rinha2024
                 transacao.Descricao.Length > 10 ||
                 transacao.Valor % 1 != 0 || //verifica se foi informado um valor inteiro
                 transacao.Valor < 0 ||
-                (transacao.Tipo != "c" && transacao.Tipo != "d"))
+                transacao.Tipo != "c" && transacao.Tipo != "d")
                 return Results.UnprocessableEntity();
 
             var saldos = transacao.Tipo == "c" ?
@@ -46,6 +34,7 @@ namespace Rinha2024
 
             //protegidos de erros unicamente pelo poder da lógica
             int[] Limites = [0, 100000, 80000, 1000000, 10000000, 500000];
+
             return Results.Ok(new TransacaoResponse(Limites[id], saldos.FirstOrDefault()?.saldo_atual ?? 0));
         }
 

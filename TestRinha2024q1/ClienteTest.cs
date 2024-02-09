@@ -1,6 +1,6 @@
 namespace TestRinha2024q1
 {
-    public class ClientesTest
+    public class ClienteTest
     {
         [Fact]
         public void Test1()
