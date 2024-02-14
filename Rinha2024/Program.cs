@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rinha2024.Data;
@@ -13,6 +14,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContextPool<AppDBContext>(options =>
     options.UseNpgsql(connectionString), poolSize: 100);
+
+builder.Services.AddRequestTimeouts(options => options.DefaultPolicy = new RequestTimeoutPolicy { Timeout = TimeSpan.FromSeconds(60) });
 
 var app = builder.Build();
 

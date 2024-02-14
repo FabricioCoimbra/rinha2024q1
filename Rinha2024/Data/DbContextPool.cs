@@ -3,6 +3,9 @@ using System.Collections.Concurrent;
 
 namespace Rinha2024.Data;
 
+/// <summary>
+/// substituto do AddDbContextPool, mas com a diferença de nunca destruir o objeto. Pode se rusado no futuro pra remover o EF e usar ADO diretamente.
+/// </summary>
 internal class DbContextPool
 {
     private readonly ConcurrentQueue<AppDBContext> Pool;
