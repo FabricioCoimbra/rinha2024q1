@@ -8,6 +8,8 @@ namespace Rinha2024.Service
     //Não me guento sem criar um service separado com as regras de negócio kkkkkkkkkkkkkk
     public static class ClienteService
     {
+        //protegidos de erros unicamente pelo poder da lógica
+        private static readonly int[] Limites = [0, 100000, 80000, 1000000, 10000000, 500000];
         public static async Task<IResult> ExecutaTransacao(int id, [FromBody] Transacao transacao, [FromServices] AppDBContext dbContext)
         {
             if (id < 1 || id > 5)
@@ -32,9 +34,6 @@ namespace Rinha2024.Service
             if (saldos.FirstOrDefault()?.saldo_atual is null)
                 return Results.UnprocessableEntity();
 
-            //protegidos de erros unicamente pelo poder da lógica
-            int[] Limites = [0, 100000, 80000, 1000000, 10000000, 500000];
-
             return Results.Ok(new TransacaoResponse(Limites[id], saldos.FirstOrDefault()?.saldo_atual ?? 0));
         }
 
@@ -44,14 +43,13 @@ namespace Rinha2024.Service
                 return Results.NotFound();
 
             var cliente = await dbContext.Clientes
-            .Include(c => c.Transacoes)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.Id == id);
+                .Include(c => c.Transacoes)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (cliente is null)
                 return Results.NotFound();
 
-            //protegidos de erros unicamente pelo poder da lógica (e código duplicado também)
-            int[] Limites = [0, 100000, 80000, 1000000, 10000000, 500000];
             var saldo = new Saldo() { Data_extrato = DateTime.Now, Limite = Limites[id], Total = cliente.Saldoinicial };
             var transacoesDoCliente = cliente.Transacoes
                 .OrderByDescending(t => t.Realizada_em)

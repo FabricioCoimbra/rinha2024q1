@@ -16,6 +16,8 @@ builder.Services.AddDbContextPool<AppDBContext>(options =>
     options.UseNpgsql(connectionString), poolSize: 100);
 
 builder.Services.AddRequestTimeouts(options => options.DefaultPolicy = new RequestTimeoutPolicy { Timeout = TimeSpan.FromSeconds(60) });
+//TODO remover logs para rodar pra valer
+//builder.Logging.ClearProviders();
 
 var app = builder.Build();
 
